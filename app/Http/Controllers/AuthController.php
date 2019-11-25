@@ -1,41 +1,55 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 use App\User;
+use \Cookie;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
-        \Log::info($request);
-        $loginData = $request->validate([
-            'email' => 'email|required',
-            'password' => 'required',
-        ]);
-
-        if (!auth()->attempt($loginData)) {
-            \Log::info('w here');
-            return response(['message' => 'Invalid request']);
-        }
-        $accessToken = auth()->user()->createToken('authToken')->accessToken;
-        return response(['user' => auth()->user(), 'access_token' => $accessToken]);
-    }
+    public $loginAfterSignUp = true;
 
     public function register(Request $request)
     {
-        \Log::info('REGISTER');
-        $request->validate([
-            'name' => ['string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-        ]);
-
-        return User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => bcrypt($request->password),
         ]);
+
+        $token = auth()->login($user);
+        return $this->respondWithToken($token);
     }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only(['email', 'password']);
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        return $this->respondWithToken($token);
+    }
+
+    public function getAuthUser(Request $request)
+    {
+        // \Log::debug(auth()->user());
+        return response()->json(auth()->user());
+    }
+
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json(['message'=>'Successfully logged out']);
+    }
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ])->cookie(\Config::get('constants.cookieName'), $token);
+    }
+
 }
