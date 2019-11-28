@@ -10,7 +10,7 @@ class AuthController extends Controller
 {
     public $loginAfterSignUp = true;
 
-    public function register(Request $request)
+    public function signup(Request $request)
     {
         $user = User::create([
             'name' => $request->name,
