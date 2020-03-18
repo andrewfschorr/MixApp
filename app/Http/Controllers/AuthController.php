@@ -12,11 +12,20 @@ class AuthController extends Controller
 
     public function signup(Request $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
+        } catch(\Exception $e) {
+            $errorCode = $e->errorInfo[1];
+            if($errorCode == 1062){
+                return response()->json(['error' => 'Duplicate Entry'], 409);
+            } else {
+                return response()->json(['error' => 'Unknown error'], 500);
+            }
+        }
 
         $token = auth()->login($user);
         return $this->respondWithToken($token);
@@ -25,7 +34,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only(['email', 'password']);
-
+        \Log::debug($request);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -34,8 +43,15 @@ class AuthController extends Controller
 
     public function getAuthUser(Request $request)
     {
-        // \Log::debug(auth()->user());
-        return response()->json(auth()->user());
+        $user = auth()->user();
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'drinks' => $user->drinks->map(function($item) {
+                return $item->only(['name', 'description', 'image', 'id']);
+            })
+        ];
     }
 
     public function logout()
