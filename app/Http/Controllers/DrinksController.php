@@ -18,7 +18,6 @@ class DrinksController extends Controller
                 'added_by' => $userId,
             ]);
         } catch (\Exception $e) {
-
             $errorCode = $e->errorInfo[1];
             if($errorCode == 1062){
                 return response()->json(['error' => 'Duplicate Entry'], 409);
@@ -34,6 +33,7 @@ class DrinksController extends Controller
         $drinkSearchQuery = $queryString . '%';
         $drinks = \DB::table('drinks')
                 ->where('name', 'like', $drinkSearchQuery)
+                ->limit(4)
                 ->get();
 
         return $drinks->map(function($drink) {
@@ -44,5 +44,19 @@ class DrinksController extends Controller
                 'image' => $drink->image,
             ];
         });
+    }
+
+    public function unMatchDrink(Request $request, $id)
+    {
+        $drinkRemoved;
+        try {
+            $drinkRemoved = \Auth::user()->drinks()->detach($id);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+        return response()->json([
+            'status' => 'OK',
+            'drinkRemoved' => (int)$id,
+        ], 200);
     }
 }

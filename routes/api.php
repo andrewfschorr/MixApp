@@ -20,7 +20,8 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/user', function(Request $request) {
         return $request->user();
     });
-    Route::get('/me',           'AuthController@getAuthUser');
-    Route::post('/drink',       'DrinksController@add');
-    Route::get('/drinks',       'DrinksController@getDrinks');
+    Route::get('/me',                 'AuthController@getAuthUser');
+    Route::post('/drink',             'DrinksController@add');
+    Route::delete('/drink/{id}',       'DrinksController@unMatchDrink');
+    Route::get('/drinks',             'DrinksController@getDrinks');
 });
