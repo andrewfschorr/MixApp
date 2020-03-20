@@ -48,15 +48,29 @@ class DrinksController extends Controller
 
     public function unMatchDrink(Request $request, $id)
     {
-        $drinkRemoved;
         try {
-            $drinkRemoved = \Auth::user()->drinks()->detach($id);
+            \Auth::user()->drinks()->detach($id);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong'], 500);
         }
         return response()->json([
             'status' => 'OK',
             'drinkRemoved' => (int)$id,
+        ], 200);
+    }
+
+    public function matchDrink(Request $request, $id)
+    {
+        try {
+            $thing = \Auth::user()->drinks()->attach($id);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+        return response()->json([
+            'status' => 'OK',
+            'drink' => \App\Drink::find((int)$id)->only([
+                'id', 'name', 'description', 'image'
+            ]),
         ], 200);
     }
 }
