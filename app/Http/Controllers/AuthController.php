@@ -12,6 +12,10 @@ class AuthController extends Controller
 
     public function signup(Request $request)
     {
+        if ($request->accessCode !== env('ACCESS_CODE', '')) {
+            return response()->json(['error' => 'Wrong access code'], 401);
+        }
+
         try {
             $user = User::create([
                 'name' => $request->name,
@@ -27,15 +31,14 @@ class AuthController extends Controller
             }
         }
 
-        $token = auth()->login($user);
+        $token = auth('api')->login($user);
         return $this->respondWithToken($token);
     }
 
     public function login(Request $request)
     {
         $credentials = $request->only(['email', 'password']);
-        \Log::debug($request);
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->respondWithToken($token);
@@ -43,7 +46,7 @@ class AuthController extends Controller
 
     public function getAuthUser(Request $request)
     {
-        $user = auth()->user();
+        $user = auth('api')->user();
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -56,7 +59,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        auth()->logout();
+        auth('api')->logout();
         return response()->json(['message'=>'Successfully logged out']);
     }
     protected function respondWithToken($token)
@@ -64,7 +67,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 60
         ])->cookie(\Config::get('constants.cookieName'), $token);
     }
 

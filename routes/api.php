@@ -25,6 +25,4 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::delete('/drink/{id}',      'DrinksController@unMatchDrink');
     Route::post('/drink/{id}',        'DrinksController@matchDrink');
     Route::get('/drinks',             'DrinksController@getDrinks');
-
-
 });

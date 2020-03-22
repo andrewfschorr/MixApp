@@ -9,7 +9,6 @@ class DrinksController extends Controller
 {
     public function add(Request $request)
     {
-        \Log::debug($request);
         try {
             $userId = \Auth::user()->id;
             $drink = Drink::create([
