@@ -13,8 +13,7 @@ return [
     */
 
     'supportsCredentials' => true,
-    // 'allowedOrigins' => ['http://localhost:3000', 'https://mix-client.now.sh'],
-    'allowedOrigins' => ['*'],
+    'allowedOrigins' => ['http://localhost:3000', 'https://topofshelf.com'],
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],
     'allowedMethods' => ['*'],
