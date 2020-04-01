@@ -2,12 +2,12 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Drink;
+use App\Ingredient;
 use Faker\Generator as Faker;
 
-$factory->define(Drink::class, function (Faker $faker) {
+$factory->define(Ingredient::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->word,
-        'description' => Str::random(3),
+        'description' => Str::random(rand(5, 10)),
     ];
 });

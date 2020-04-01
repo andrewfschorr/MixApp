@@ -18,6 +18,7 @@ class CreateDrinksTable extends Migration
             $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->string('image')->nullable();
+            $table->string('glass_type')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('added_by')->default(1);
             $table->foreign('added_by')->references('id')->on('users');
@@ -27,6 +28,7 @@ class CreateDrinksTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('drink_id');
+            $table->decimal('rating', 2, 1)->nullable();
             $table->timestamps();
             $table->unique(['drink_id', 'user_id']);
             $table->foreign('drink_id')->references('id')->on('drinks')->onDelete('cascade');
