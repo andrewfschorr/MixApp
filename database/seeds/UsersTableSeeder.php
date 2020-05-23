@@ -20,7 +20,13 @@ class UsersTableSeeder extends Seeder
         ]);
 
         factory(App\User::class, 50)->create()->each(function ($user) {
-            $user->drinks()->save(factory(App\Drink::class)->make());
+            $drink = factory(App\Drink::class)->make();
+            $user->drinks()->save($drink);
+
+            $drink->ingredients()->save(factory(App\Ingredient::class)->make(), [
+                'amount' => 1,
+                'unit' => 1,
+            ]);
         });
     }
 }

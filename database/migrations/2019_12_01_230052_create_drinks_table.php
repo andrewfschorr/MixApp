@@ -17,10 +17,12 @@ class CreateDrinksTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description')->nullable();
-            $table->string('image')->nullable();
             $table->string('glass_type')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('added_by')->default(1);
+            $table->unsignedSmallInteger('approved_status')->default(config('enums.approvedStatus.APPROVED'));
+            $table->json('instructions')->nullable(); // this probably shouldn't be nullable
+            // foreign keys
+            $table->unsignedBigInteger('added_by');
             $table->foreign('added_by')->references('id')->on('users');
         });
 

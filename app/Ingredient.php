@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ingredient extends Model
 {
 
-    protected $fillable = [];
+    protected $fillable = ['name', 'description', 'image'];
 
     public function drinks()
     {

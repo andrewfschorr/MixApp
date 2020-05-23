@@ -101,7 +101,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
+    'ttl' => env('JWT_TTL', 5256000), // minutes === 10 years
 
     /*
     |--------------------------------------------------------------------------
@@ -170,8 +170,9 @@ return [
     */
 
     'persistent_claims' => [
-        // 'foo',
-        // 'bar',
+        'name',
+        'email',
+        'userId',
     ],
 
     /*

@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'cookieName' => 'mix_cookie'
+    'cookieName' => 'whiskyNeat'
 ];

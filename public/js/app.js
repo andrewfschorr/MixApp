@@ -65496,12 +65496,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+/* harmony import */ var _utils_headerhelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/headerhelper */ "./resources/js/utils/headerhelper.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -65510,26 +65505,116 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-var sendRequest = function sendRequest(item) {
-  console.log(item);
+
+
+var sendRequest = function sendRequest(item, type, ingredients, setIngredients) {
+  if (!item.description || !item.name) return;
+
+  if (type === DELETE) {
+    var confirm = window.confirm("Are you sure you want to delete ".concat(item.name));
+    if (!confirm) return;
+  }
+
+  var data = {
+    method: type,
+    credentials: 'same-origin',
+    headers: _objectSpread({
+      'Content-Type': 'application/json'
+    }, Object(_utils_headerhelper__WEBPACK_IMPORTED_MODULE_2__["getCsrfHeader"])())
+  };
+  var endpoint;
+
+  if (type === ADD) {
+    endpoint = '/ingredient';
+  } else {
+    endpoint = "/ingredient/".concat(item.id);
+  }
+
+  if (type === ADD || type === EDIT) {
+    var name = item.name,
+        description = item.description;
+    data.body = JSON.stringify({
+      name: name,
+      description: description
+    });
+  }
+
+  fetch(endpoint, data).then(function (resp) {
+    if (resp.status !== 200) {
+      throw new Error('bad request');
+    }
+
+    return resp.json();
+  }).then(function (data) {
+    if (type === DELETE) {
+      setIngredients(ingredients.filter(function (i) {
+        return i.id !== data.drinkDeleted;
+      }));
+    } else if (type === EDIT) {
+      window.$('#addEditIngredient').modal('hide');
+      setIngredients(ingredients.map(function (i) {
+        if (i.id !== data.drinkUpdated.id) {
+          return i;
+        } else {
+          var _data$drinkUpdated = data.drinkUpdated,
+              id = _data$drinkUpdated.id,
+              _name = _data$drinkUpdated.name,
+              _description = _data$drinkUpdated.description,
+              image = _data$drinkUpdated.image;
+          return {
+            id: id,
+            name: _name,
+            description: _description,
+            imagegetDrink: imagegetDrink
+          };
+        }
+      }));
+    } else if (type === ADD) {
+      window.$('#addEditIngredient').modal('hide');
+      setIngredients(function (ingredients) {
+        return [].concat(_toConsumableArray(ingredients), [data.drinkAdded]);
+      });
+    } else {
+      throw new Error('something is bad');
+    }
+  });
 };
 
+var DELETE = 'DELETE';
+var ADD = 'POST';
+var EDIT = 'PUT';
 var UNSELECTED = Object.freeze({
   id: null,
   name: '',
   description: ''
 });
 
-var Ingredients = function Ingredients(_ref) {
-  var ingredients = _ref.ingredients;
-
+var Ingredients = function Ingredients(options) {
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(UNSELECTED),
       _useState2 = _slicedToArray(_useState, 2),
       selectedingredient = _useState2[0],
       setSelectedIngredient = _useState2[1];
+
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(options.ingredients),
+      _useState4 = _slicedToArray(_useState3, 2),
+      ingredients = _useState4[0],
+      setIngredients = _useState4[1];
 
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     $('#addEditIngredient').on('hidden.bs.modal', function () {
@@ -65604,7 +65689,7 @@ var Ingredients = function Ingredients(_ref) {
             cursor: 'pointer'
           },
           onClick: function onClick(e) {
-            return sendRequest(ingredient);
+            sendRequest(ingredient, DELETE, ingredients, setIngredients);
           },
           className: "bi bi-trash-fill",
           width: "1em",
@@ -65722,7 +65807,13 @@ var Ingredients = function Ingredients(_ref) {
       type: "email",
       className: "form-control",
       id: "ingredientDescription",
-      placeholder: "Good stuff"
+      placeholder: "Good stuff",
+      value: selectedingredient.description,
+      onChange: function onChange(e) {
+        setSelectedIngredient(_objectSpread({}, selectedingredient, {
+          description: e.target.value
+        }));
+      }
     }))),
     /*#__PURE__*/
     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -65737,7 +65828,14 @@ var Ingredients = function Ingredients(_ref) {
     /*#__PURE__*/
     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
       type: "button",
-      className: "btn btn-primary"
+      className: "btn btn-primary",
+      onClick: function onClick(e) {
+        if (selectedingredient.id === null) {
+          sendRequest(selectedingredient, ADD, ingredients, setIngredients);
+        } else {
+          sendRequest(selectedingredient, EDIT, ingredients, setIngredients);
+        }
+      }
     }, selectedingredient.id === null ? 'Add Ingredient' : 'Update Ingredient'))))))
   );
 };
@@ -65752,6 +65850,25 @@ if (document.getElementById('ingredients')) {
     ingredients: bootstrapData
   }), document.getElementById('ingredients'));
 }
+
+/***/ }),
+
+/***/ "./resources/js/utils/headerhelper.js":
+/*!********************************************!*\
+  !*** ./resources/js/utils/headerhelper.js ***!
+  \********************************************/
+/*! exports provided: getCsrfHeader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCsrfHeader", function() { return getCsrfHeader; });
+function getCsrfHeader() {
+  return {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  };
+}
+;
 
 /***/ }),
 

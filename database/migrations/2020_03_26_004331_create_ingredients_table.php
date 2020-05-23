@@ -18,6 +18,7 @@ class CreateIngredientsTable extends Migration
             $table->timestamps();
             $table->string('name')->unique();
             $table->string('description')->nullable();
+            $table->unsignedSmallInteger('approved_status')->default(config('enums.approvedStatus.APPROVED'));
             $table->string('image')->nullable();
         });
 
@@ -26,7 +27,7 @@ class CreateIngredientsTable extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('ingredient_id');
             $table->unsignedBigInteger('drink_id');
-            $table->string('measurement')->nullable();
+            $table->string('amount')->nullable();
             $table->string('unit');
             $table->unique(['ingredient_id', 'drink_id']);
             $table->foreign('drink_id')->references('id')->on('drinks')->onDelete('cascade');
@@ -41,7 +42,7 @@ class CreateIngredientsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ingredients');
         Schema::dropIfExists('drink_ingredient');
+        Schema::dropIfExists('ingredients');
     }
 }

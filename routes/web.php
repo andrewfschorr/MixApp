@@ -22,6 +22,8 @@ Auth::routes([
 Route::get('/home',        'HomeController@index')->name('home');
 Route::get('/ingredients', 'AdminController@ingredients');
 
-Auth::routes();
+Route::post('/ingredient',        'AdminController@addIngredient');
+Route::delete('/ingredient/{id}', 'AdminController@deleteIngredient');
+Route::put('/ingredient/{id}',    'AdminController@updateIngredient');
 
 Route::get('/home', 'HomeController@index')->name('home');
