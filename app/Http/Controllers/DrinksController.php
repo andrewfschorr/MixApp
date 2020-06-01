@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Drink;
 use App\Ingredient;
-use App\Image;
+use App\DrinkImage;
 use Illuminate\Http\Request;
 
 class DrinksController extends Controller
 {
-
     // TODO which routes need auth middleware
     public function add(Request $request)
     {
@@ -29,17 +28,15 @@ class DrinksController extends Controller
                 'description' => $request->description,
                 'added_by' => $userId,
                 'instructions' => json_encode($instructions),
-                // 'image' => $image->id,
             ]);
 
             // image storage
             if ($request->file('image')) {
                 $path = $request->file('image')->store('images', 's3');
                 \Storage::disk('s3')->setVisibility($path, 'public');
-                $image = Image::create([
+                $image = DrinkImage::create([
                     'filename' => basename($path),
                     'url' => \Storage::disk('s3')->url($path),
-                    // 'drink_id' => $drink->id, attach below instead of this line
                 ]);
                 $drink->image()->save($image);
             }
@@ -69,12 +66,7 @@ class DrinksController extends Controller
     public function getDrinks(Request $request)
     {
         $queryString = $request->input('q');
-        $drinkSearchQuery = $queryString . '%';
-        $drinks = \DB::table('drinks')
-                ->where('name', 'like', $drinkSearchQuery)
-                ->limit(4)
-                ->get();
-
+        $drinks = \App\Drink::where('name', 'like', $queryString ."%")->get();
         return $drinks->map(function($drink) {
             return [
                 'id' => $drink->id,
@@ -92,15 +84,12 @@ class DrinksController extends Controller
             'name' => $drink->name,
             'id' => $drink->id,
             'description' => $drink->description,
-            'image' => $drink->image,
             'glass_type' => $drink->glass_type,
             'added_by' => $drink->added_by,
             'approved_status' => $drink->approved_status,
-            'ingredients' => $drink->ingredients->map->only([
-                'id', 'name', 'description', 'approved_status', 'image',
-            ]),
-            'instructions' => json_decode($drink->instructions),
-            'image' => $drink->image->url,
+            'ingredients' => $drink->ingredients,
+            'instructions' => $drink->instructions ? json_decode($drink->instructions) : [],
+            'image' => $drink->image,
         ];
     }
 }

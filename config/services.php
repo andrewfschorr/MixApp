@@ -34,4 +34,10 @@ return [
         'client_id' => env('PASSPORT_CLIENT_ID'),
         'client_secret' => env('PASSPORT_CLIENT_SECRET'),
     ],
+
+    'facebook' => [
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => env('CLIENT_URL') . '/api/facebook/login',
+    ],
 ];

@@ -30,3 +30,6 @@ Route::group(['middleware' => 'auth:api'], function() {
 Route::get('/ingredients',        'IngredientsController@getIngredients');
 Route::get('/drinks',             'DrinksController@getDrinks');
 Route::get('/drink/{id}',         'DrinksController@getDrink');
+
+Route::get('/login/facebook', 'Auth\LoginController@redirectToProvider');
+Route::get('/login/facebook/callback', 'Auth\LoginController@handleProviderCallback');

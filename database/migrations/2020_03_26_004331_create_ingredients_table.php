@@ -28,7 +28,7 @@ class CreateIngredientsTable extends Migration
             $table->unsignedBigInteger('ingredient_id');
             $table->unsignedBigInteger('drink_id');
             $table->string('amount')->nullable();
-            $table->string('unit');
+            $table->integer('unit'); // this should probably be an INT
             $table->unique(['ingredient_id', 'drink_id']);
             $table->foreign('drink_id')->references('id')->on('drinks')->onDelete('cascade');
             $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');

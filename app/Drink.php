@@ -22,19 +22,37 @@ class Drink extends Model
         return $this->belongsToMany('App\User');
     }
 
+    public function getIngredientsAttribute() {
+        if ($this->ingredients()) {
+            return $this->ingredients()->get()->map(function($i) {
+                return [
+                    'id' => $i->id,
+                    'image' => $i->image,
+                    'name' => $i->name,
+                    'amount' => $i->pivot->amount,
+                    'unit' => (int) $i->pivot->unit,
+                ];
+            });
+        }
+        return [];
+    }
+
     public function ingredients()
     {
-        return $this->belongsToMany('App\Ingredient');
+        return $this->belongsToMany('App\Ingredient')->withPivot('amount', 'unit');
     }
 
     public function image()
     {
-        return $this->hasOne('App\Image');
+        return $this->hasOne('App\DrinkImage');
     }
 
-    // this was for algolia search
-    // public function searchableAs()
-    // {
-    //     return 'drinks';
-    // }
+    public function getImageAttribute()
+    {
+        if ($this->image()->exists()) {
+            return $this->image()->get()->first()->url;
+        }
+        return null;
+    }
+
 }

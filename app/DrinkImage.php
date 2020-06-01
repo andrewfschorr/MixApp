@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Image extends Model
+class DrinkImage extends Model
 {
     protected $fillable = [
         'filename', 'url', 'drink_id',

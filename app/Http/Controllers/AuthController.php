@@ -46,14 +46,15 @@ class AuthController extends Controller
 
     public function getAuthUser(Request $request)
     {
+        \Log::debug($request->all());
         $user = auth('api')->user();
         return [
-            'id' => $user->id,
+            // 'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'drinks' => $user->drinks->map(function($item) {
-                return $item->only(['name', 'description', 'image', 'id']);
-            })
+            // 'drinks' => $user->drinks->map(function($item) {
+            //     return $item->only(['name', 'description', 'image', 'id']);
+            // })
         ];
     }
 

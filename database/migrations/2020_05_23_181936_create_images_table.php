@@ -13,18 +13,13 @@ class CreateImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('drink_images', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('filename');
             $table->string('url');
-            $table->unsignedBigInteger('drink_id')->nullable();
+            $table->unsignedBigInteger('drink_id');
             $table->timestamps();
         });
-
-        // Schema::table('drinks', function($table) {
-        //     $table->unsignedBigInteger('image')->nullable();
-        //     $table->foreign('image')->references('id')->on('images')->onDelete('cascade');
-        // });
     }
 
     /**
