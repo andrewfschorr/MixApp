@@ -17,8 +17,8 @@ class CreateSocialProfilesTable extends Migration
             $table->bigIncrements('id');
             $table->enum('provider', ['facebook']);
             // $table->string('token');
-            $table->unsignedBigInteger('fb_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('fb_id')->unique();
+            $table->unsignedBigInteger('user_id')->unique();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

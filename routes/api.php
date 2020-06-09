@@ -27,9 +27,11 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/me',                 'AuthController@getAuthUser');
 });
 
-Route::get('/ingredients',        'IngredientsController@getIngredients');
-Route::get('/drinks',             'DrinksController@getDrinks');
-Route::get('/drink/{id}',         'DrinksController@getDrink');
+Route::get('/ingredients',   'IngredientsController@getIngredients');
+Route::get('/tags',          'TagsController@getAllTags');
+Route::get('/drinks',        'DrinksController@getDrinks');
+Route::get('/drink/{id}',    'DrinksController@getDrink');
 
-Route::get('/login/facebook', 'Auth\LoginController@redirectToProvider');
-Route::get('/login/facebook/callback', 'Auth\LoginController@handleProviderCallback');
+Route::get('/login/facebook',           'Auth\LoginController@redirectToProvider');
+Route::get('/login/facebook/callback',  'Auth\LoginController@handleProviderCallback');
+Route::get('/fbaccesscode',             'Auth\LoginController@checkFbAccessCode');

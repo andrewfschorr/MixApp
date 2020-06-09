@@ -50,6 +50,16 @@ class LoginController extends Controller
         ];
     }
 
+    public function checkFbAccessCode(Request $request)
+    {
+        if ($request->accessCode !== env('ACCESS_CODE', '')) {
+            return response()->json(['error' => 'Wrong access code'], 401);
+        }
+
+        return response()->json(['success' => 'success'], 200);
+    }
+
+
     /**
      * Redirect the user to the FB authentication page.
      *
@@ -57,9 +67,11 @@ class LoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-        // if ($request->accessCode !== env('ACCESS_CODE', '')) {
-        //     return response()->json(['error' => 'Wrong access code'], 401);
-        // }
+        if ($request->accessCode !== env('ACCESS_CODE', '')) {
+            // probably should redirect to login or signup, wherever they came from,
+            // but this is a pretty rare use case in that they manually went here in the browser
+            return redirect(env('CLIENT_URL'));
+        }
         return \Socialite::driver('facebook')->stateless()->redirect();
     }
 
@@ -92,14 +104,6 @@ class LoginController extends Controller
         //     }
         //   }
 
-        // $token = auth('api')->login($user);
-        // return $this->respondWithToken($token);
-        // return response()->json([
-        //     'access_token' => $token,
-        //     'token_type' => 'bearer',
-        //     // 'expires_in' => auth('api')->factory()->getTTL() * 60
-        // ]);
-
         $user = User::firstOrCreate([
             'email' => $facebookUser->email,
         ], [
@@ -107,10 +111,11 @@ class LoginController extends Controller
             'avatar' => $facebookUser->avatar,
         ]);
 
-        $socialProfile = SocialProfile::create([
+        $socialProfile = SocialProfile::firstOrCreate([
+            'user_id' => $user->id,
+        ], [
             'provider' => 'facebook',
             'fb_id' => $facebookUser->id,
-            'user_id' => $user->id,
         ]);
 
         $user->social_id = $socialProfile->id;
@@ -119,7 +124,7 @@ class LoginController extends Controller
         $token = auth('api')->login($user);
 
         return [
-            'token_type' => 'bearer',
+            'token_type' => 'bearer', // THIS IS NEEDED
             'access_token' => $token,
             'user' => $user
         ];

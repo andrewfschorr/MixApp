@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Drink;
+use App\Tag;
 use App\Ingredient;
 use App\DrinkImage;
 use Illuminate\Http\Request;
@@ -41,8 +42,6 @@ class DrinksController extends Controller
                 $drink->image()->save($image);
             }
 
-
-            // same here
             $reqIngredients = is_array($request->ingredients)
                 ? $request->ingredients : json_decode($request->ingredients, true);
             foreach ($reqIngredients as $i) {
@@ -52,6 +51,14 @@ class DrinksController extends Controller
                     'amount' => $i['amount'],
                 ]);
             }
+
+            if ($request->tags && is_array($request->tags)) {
+                foreach ($request->tags as $t) {
+                    $tag = Tag::find((int) $t);
+                    $drink->tags()->attach($tag);
+                }
+            }
+
         } catch (\Exception $e) {
             \Log::error($e);
             $errorCode = $e->errorInfo[1];

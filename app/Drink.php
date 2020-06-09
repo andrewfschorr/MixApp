@@ -55,4 +55,8 @@ class Drink extends Model
         return null;
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag');
+    }
 }

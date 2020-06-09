@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ingredient;
+use App\Tag;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -66,6 +67,61 @@ class AdminController extends Controller
         return response()->json([
             'status' => 'OK',
             'drinkDeleted' => (int)$id,
+        ], 200);
+    }
+
+    public function tags(Request $request)
+    {
+        return view('tags', [
+            'bootstrapData' => Tag::all('id', 'name'),
+        ]);
+    }
+
+    public function addTag(Request $request)
+    {
+        try {
+            $ingredient = Tag::create([
+                'name' => $request->input('name')
+            ]);
+            $ingredient->save();
+        } catch (\Exception $e) {
+            \Log::debug($e);
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+        return response()->json([
+            'status' => 'OK',
+            'tagAdded' => $ingredient->only('id', 'name'),
+        ], 200);
+    }
+
+    public function updateTag(Request $request, $id)
+    {
+        $tag = Tag::find($id);
+        $tag->name = $request->input('name');
+        try {
+            $tag->save();
+        } catch (\Exception $e) {
+            \Log::debug($e);
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+        return response()->json([
+            'status' => 'OK',
+            'tagUpdated' => $tag->only('id', 'name'),
+        ], 200);
+
+    }
+
+    public function deleteTag(Request $request, $id)
+    {
+        $tag = Tag::find($id);
+        try {
+            $tag->delete();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+        return response()->json([
+            'status' => 'OK',
+            'tagDeleted' => (int)$id,
         ], 200);
     }
 }

@@ -13,3 +13,4 @@ require('./bootstrap');
  */
 
 require('./components/IngredientsComponent');
+require('./components/TagsComponent');

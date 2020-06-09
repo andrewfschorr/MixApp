@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-// use App\Ingredient;
+use App\Ingredient;
 use Illuminate\Http\Request;
 
 class IngredientsController extends Controller
@@ -11,6 +11,7 @@ class IngredientsController extends Controller
     {
         $queryString = $request->input('q');
         $ingredientsSearchQuery = $queryString . '%';
+        // TODO this is probably not right to access the DB directly
         $ingredients = \DB::table('ingredients')
                 ->where('name', 'like', $ingredientsSearchQuery)
                 ->limit(4)
