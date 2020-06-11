@@ -12,6 +12,6 @@ class DrinkImage extends Model
 
     public function drink()
     {
-        return $this->hasOne('App\Drink');
+        return $this->belongsTo('App\Drink');
     }
 }

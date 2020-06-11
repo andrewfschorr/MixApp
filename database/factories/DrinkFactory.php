@@ -10,6 +10,6 @@ $factory->define(Drink::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->word,
         'description' => Str::random(3),
-        'added_by' => User::all()->random()->id,
+        'user_id' => User::all()->random()->id,
     ];
 });

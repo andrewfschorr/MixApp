@@ -27,12 +27,13 @@ class DrinksController extends Controller
             $drink = Drink::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'added_by' => $userId,
+                'user_id' => $userId,
                 'instructions' => json_encode($instructions),
             ]);
 
             // image storage
             if ($request->file('image')) {
+                \Log::debug($request->file('image'));
                 $path = $request->file('image')->store('images', 's3');
                 \Storage::disk('s3')->setVisibility($path, 'public');
                 $image = DrinkImage::create([
@@ -92,11 +93,17 @@ class DrinksController extends Controller
             'id' => $drink->id,
             'description' => $drink->description,
             'glass_type' => $drink->glass_type,
-            'added_by' => $drink->added_by,
+            'user_id' => $drink->user_id,
             'approved_status' => $drink->approved_status,
             'ingredients' => $drink->ingredients,
             'instructions' => $drink->instructions ? json_decode($drink->instructions) : [],
             'image' => $drink->image,
+            'tags' => $drink->tags->map(function($t) {
+                return [
+                    'name' => $t->name,
+                    'id' => $t->id,
+                ];
+            }),
         ];
     }
 }

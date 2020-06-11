@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 Route::get('/ingredients',   'IngredientsController@getIngredients');
 Route::get('/tags',          'TagsController@getAllTags');
+Route::get('/tag/{id}',     'TagsController@getTagById');
 Route::get('/drinks',        'DrinksController@getDrinks');
 Route::get('/drink/{id}',    'DrinksController@getDrink');
 

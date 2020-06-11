@@ -21,9 +21,9 @@ class CreateDrinksTable extends Migration
             $table->timestamps();
             $table->unsignedSmallInteger('approved_status')->default(config('enums.approvedStatus.APPROVED'));
             $table->json('instructions')->nullable(); // this probably shouldn't be nullable
-            // foreign keys
-            $table->unsignedBigInteger('added_by');
-            $table->foreign('added_by')->references('id')->on('users');
+            // TODO do we need these two below? redo
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
         });
 
         Schema::create('drink_user', function (Blueprint $table) {

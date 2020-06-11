@@ -13,4 +13,11 @@ class TagsController extends Controller
             return $tag->only(['id', 'name']);
         });
     }
+
+    public function getTagById(Request $request, $id)
+    {
+        return Tag::find($id)->drinks->map(function($t) {
+            return $t->only(['name', 'id']);
+        });
+    }
 }

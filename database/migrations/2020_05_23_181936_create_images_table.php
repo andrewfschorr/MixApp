@@ -13,11 +13,15 @@ class CreateImagesTable extends Migration
      */
     public function up()
     {
+        // this is called drink_images because the model is DrinkImage, nothing to do with foreign key :/
         Schema::create('drink_images', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('filename');
             $table->string('url');
-            $table->unsignedBigInteger('drink_id');
+            // this needs to be nullable, i have no idea what it errors otherwise
+            // https://laracasts.com/series/laravel-6-from-scratch/episodes/30#reply=4838
+            $table->unsignedBigInteger('drink_id')->nullable();
+            $table->foreign('drink_id')->references('id')->on('drinks')->onDelete('cascade');
             $table->timestamps();
         });
     }

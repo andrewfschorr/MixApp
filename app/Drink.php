@@ -9,7 +9,7 @@ class Drink extends Model
 {
 
     protected $fillable = [
-        'name', 'description', 'added_by', 'instructions',
+        'name', 'description', 'user_id', 'instructions',
     ];
 
     // TODO get this to work
@@ -58,5 +58,10 @@ class Drink extends Model
     public function tags()
     {
         return $this->belongsToMany('App\Tag');
+    }
+
+    public function added_by()
+    {
+        return $this->belongsTo('App\User', 'user_id');
     }
 }
