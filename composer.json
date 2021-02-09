@@ -13,7 +13,7 @@
         "elasticsearch/elasticsearch": "^7.5",
         "fideloper/proxy": "^4.0",
         "fruitcake/laravel-cors": "^2.0",
-        "laravel/framework": "7.0",
+        "laravel/framework": "7.30.4",
         "laravel/nova": "*",
         "laravel/passport": "^8.0",
         "laravel/scout": "^8.0",
