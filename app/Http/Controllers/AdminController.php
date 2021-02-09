@@ -9,6 +9,12 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
 
+    /*
+    *
+    *
+    * THIS HAS BEEN DEPRECATED IN FAVOR OF NOVA
+    *
+    */
     public function __construct()
     {
         $this->middleware('auth');

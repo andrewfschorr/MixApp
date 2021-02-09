@@ -33,7 +33,6 @@ class DrinksController extends Controller
 
             // image storage
             if ($request->file('image')) {
-                \Log::debug($request->file('image'));
                 $path = $request->file('image')->store('images', 's3');
                 \Storage::disk('s3')->setVisibility($path, 'public');
                 $image = DrinkImage::create([
@@ -53,8 +52,18 @@ class DrinksController extends Controller
                 ]);
             }
 
-            if ($request->tags && is_array($request->tags)) {
-                foreach ($request->tags as $t) {
+            $tags = null;
+            // if its content type form data we have to decode
+            if ($request->tags) {
+                if (\Str::startsWith($request->headers->get('Content-Type'), 'multipart/form-data;')) {
+                    $tags = json_decode($request->tags, true);
+                } else {
+                    $tags = $request->tags;
+                }
+            }
+
+            if (!is_null($tags) && is_array($tags)) {
+                foreach ($tags as $t) {
                     $tag = Tag::find((int) $t);
                     $drink->tags()->attach($tag);
                 }
@@ -104,6 +113,21 @@ class DrinksController extends Controller
                     'id' => $t->id,
                 ];
             }),
+        ];
+    }
+
+    public function getRelatedDrinks(Request $request, $id)
+    {
+        $drink = Drink::find($id);
+        $a = [];
+        // TODO limit this at like 5 or 10 related drinks
+        $drink->ingredients->map(function($ingredient) use (&$a){
+            $ingredientId = $ingredient['id'];
+            $drinks = Ingredient::find($ingredientId)->drinks;
+            $a = array_merge($a, $drinks->toArray());
+        });
+        return [
+            'relatedDrinks' => $a,
         ];
     }
 }

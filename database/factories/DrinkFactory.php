@@ -4,6 +4,7 @@
 
 use App\Drink;
 use App\User;
+use App\Tag;
 use Faker\Generator as Faker;
 
 $factory->define(Drink::class, function (Faker $faker) {

@@ -17,7 +17,9 @@ class TagsController extends Controller
     public function getTagById(Request $request, $id)
     {
         return Tag::find($id)->drinks->map(function($t) {
-            return $t->only(['name', 'id']);
+
+            // return $t;
+            return $t->only(['name', 'id', 'image']);
         });
     }
 }

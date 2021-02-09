@@ -21,17 +21,19 @@ Route::group(['middleware' => 'auth:api'], function() {
         return $request->user();
     });
 
-    Route::post('/drink',             'DrinksController@add');
+    Route::post('/drink',                    'DrinksController@add');
     Route::delete('/shelf/{id}',      'ShelfController@add');
     Route::post('/shelf/{id}',        'ShelfController@remove');
     Route::get('/me',                 'AuthController@getAuthUser');
 });
 
-Route::get('/ingredients',   'IngredientsController@getIngredients');
-Route::get('/tags',          'TagsController@getAllTags');
-Route::get('/tag/{id}',     'TagsController@getTagById');
-Route::get('/drinks',        'DrinksController@getDrinks');
-Route::get('/drink/{id}',    'DrinksController@getDrink');
+Route::get('/ingredients',        'IngredientsController@getIngredients');
+Route::get('/tags',               'TagsController@getAllTags');
+Route::get('/tag/{id}',           'TagsController@getTagById');
+Route::get('/drinks',             'DrinksController@getDrinks');
+// TODO this route doesnt feel very restful
+Route::get('/drink/{id}/related', 'DrinksController@getRelatedDrinks');
+Route::get('/drink/{id}',         'DrinksController@getDrink');
 
 Route::get('/login/facebook',           'Auth\LoginController@redirectToProvider');
 Route::get('/login/facebook/callback',  'Auth\LoginController@handleProviderCallback');
